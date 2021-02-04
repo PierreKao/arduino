@@ -1,22 +1,28 @@
-#include "LD3320_Demo.h"
 #include "LD3320_VoiceRecongnition.h"
 
 VoiceRecognition gVoiceRecognition;
 
 void setup() {
-  // put your setup code here, to run once:  
+  // // put your setup code here, to run once:  
   gVoiceRecognition.init();
-  System_Init();
-  attachInterrupt(0, blink, FALLING);
-  Serial.print("---------------LD3320 DEMO---------------\r\n");
-  LD3320_test();
+  gVoiceRecognition.addCommand(NULL,NULL);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  switch (gVoiceRecognition.read()) //判断识别
+  {
+    case 0:                    //若是指令“kai deng”    
+      break;
+    case 1:                   //若是指令“guan deng”    
+      break;
+    case 2:                   //若是指令“guan deng”    
+      break;
+    default:
+      break;
+  }
 
+  //reset for next run
 }
 
-void blink() {
-  ProcessInt();
-}
+

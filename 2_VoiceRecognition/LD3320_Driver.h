@@ -9,7 +9,6 @@
 #define __LD3320_DRIVER_H
 
 #include "LD3320_Config.h"
-#include "mp3.h"
 
 #define ERROR   0
 #define SUCCESS 1

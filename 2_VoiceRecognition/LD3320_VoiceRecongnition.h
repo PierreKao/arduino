@@ -13,11 +13,11 @@ class VoiceRecognition
 
 public:
 	VoiceRecognition();
-//	void reset();
-	void init();	
-//	unsigned char start();
-//	void addCommand(char *pass, int num);
-//	int read();
+	// void reset();
+	void init();
+	// unsigned char start();
+	void addCommand(char *pass, int num);
+	int read();
 private:
 };
 

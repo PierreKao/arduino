@@ -137,33 +137,6 @@ void ProcessInt()
     LD_WriteReg(0x1c, 0);
 		return;
 	}	
-	// Serial.print("--------------PLAY MP3--------------\r\n");
-	// // Play MP3 to produce 3 kinkd of intterupt
-	// // A. play over
-	// // B. data send over
-	// // C. Data will be used up and sent
-	// if(LD_ReadReg(0xBA) & CAUSE_MP3_SONG_END) {
-	// 	// A. play over
-	// 	LD_WriteReg(0x2B, 0);
-	// 	LD_WriteReg(0xBA, 0);	
-	// 	LD_WriteReg(0xBC, 0);	
-	// 	LD_WriteReg(0x08, 1);
-	// 	LD_WriteReg(0x08, 0);
-	// 	LD_WriteReg(0x33, 0);
-	// 	Serial.print("play over \r\n");
-	// 	bMp3Play = 0;					// play status
-	// 	return;
-	// }
-	// if(nMp3Pos >= nMp3Size) {
-	// 	// B. data send over
-	// 	LD_WriteReg(0xBC, 0x01);//data voer
-	// 	LD_WriteReg(0x29, 0x10);
-	// 	return;	
-	// }
-	// // C. Data will be used up and sent	
-	// LD_ReloadMp3Data();
-	// LD_WriteReg(0x29, ucHighInt); 
-	// LD_WriteReg(0x02, ucLowInt);	
 }
 
 /********************************************************************************
