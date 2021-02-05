@@ -69,5 +69,8 @@ UBYTE LD_Prepare_ASR(void);
 void  LD_Reset(void);
 void  LD_play(UBYTE *mp3name);
 void  LD_Init_MP3(void);
+UBYTE LD_Is_ASR_Busy(void);
+void  LD_WriteReg(UBYTE data1,UBYTE data2);
+UBYTE LD_Start_ASR(void);
 
 #endif

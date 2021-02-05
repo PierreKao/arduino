@@ -1,20 +1,53 @@
 #include "LD3320_Driver.h"
 #include "LD3320_VoiceRecongnition.h"
 
-extern UBYTE     nAsrStatus; 
+#define MAX_KEY_LEN 20
+
+extern UBYTE     nAsrStatus;
+
 VoiceRecognition::VoiceRecognition() {}
 
 void VoiceRecognition::init()
 {
     System_Init();
-    attachInterrupt(0, ProcessInt, FALLING);
-    Serial.print("---------------LD3320 DEMO---------------\r\n");  
-    LD_Reset();
+    attachInterrupt(0, ProcessInt, FALLING);    
+    LD_Reset();    
 }
 
-void VoiceRecognition::addCommand(char *pass, int num)
+void VoiceRecognition::start()
 {
+    LD_Start_ASR();
+}
 
+int VoiceRecognition::addCommand(char *pass, int num)
+{
+    UBYTE k, flag;
+    UBYTE nAsrAddLength;
+
+    flag = SUCCESS;
+
+    if (LD_Is_ASR_Busy() == ERROR)
+    {
+        return ERROR;
+    }
+    LD_WriteReg(0xc1, num);
+    LD_WriteReg(0xc3, 0);
+    LD_WriteReg(0x08, 0x04);
+    Driver_Delay_ms(1);
+    LD_WriteReg(0x08, 0x00);
+    Driver_Delay_ms(1);
+
+    for (nAsrAddLength = 0; nAsrAddLength <= MAX_KEY_LEN; nAsrAddLength++)
+    {
+        if (pass[nAsrAddLength] == 0)
+            break;
+        LD_WriteReg(0x5, pass[nAsrAddLength]);
+    }
+    LD_WriteReg(0xb9, nAsrAddLength);
+    LD_WriteReg(0xb2, 0xff);
+    LD_WriteReg(0x37, 0x04);
+
+    return flag;
 }
 
 int VoiceRecognition::read()

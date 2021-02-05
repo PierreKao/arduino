@@ -21,11 +21,9 @@ UBYTE 	ucSPVol = 5;               // Speaker volume, MAX=15 MIN=0
 
 static UBYTE LD_ReadReg(UBYTE reg_add);
 static UBYTE LD_Run_ASR(void);
-static UBYTE LD_Check_ASRBusyFlag(void);
 static UBYTE LD_AsrAddFixed(void);
 static void LD_ReloadMp3Data();
 static void LD_Init_Common(void);
-static void LD_WriteReg(UBYTE data1,UBYTE data2);
 static void LD_Init_ASR(void);
 
 
@@ -63,6 +61,31 @@ void LD_Adjust_Volume(UBYTE val)
 
 /********************************************************************************
 function:	
+				Start ASR
+********************************************************************************/
+UBYTE LD_Start_ASR(void)
+{
+  Serial.print("ARS Preparing\r\n");
+	UBYTE i = 0;
+	UBYTE asrflag = 0;
+	for (i=0; i<5; i++) {						//run ASR try 5 times
+		LD_Init_ASR();								//init ASR
+		Driver_Delay_ms(10);
+		if (LD_Run_ASR() == ERROR) {				//start ASR
+			Serial.print("ERROR!!! LD_AsrRun\r\n");
+			LD_Reset();									//ERROR,Reset LD3320
+			Driver_Delay_ms(50);
+			continue;
+		}
+		asrflag = 1;
+		break;						
+	}
+  Serial.print("ARS Running\r\n");
+	return asrflag;
+}
+
+/********************************************************************************
+function:	
 				Prepare ASR
 ********************************************************************************/
 UBYTE LD_Prepare_ASR(void)
@@ -72,13 +95,13 @@ UBYTE LD_Prepare_ASR(void)
 	UBYTE asrflag = 0;
 	for (i=0; i<5; i++) {						//run ASR try 5 times
 		LD_Init_ASR();								//init ASR
-		Driver_Delay_ms(100);
-		if (LD_AsrAddFixed() == ERROR) {		//Add fixed to LD3320
-			Serial.print("ERROR!!! LD_AsrAddFixed\r\n");
-			LD_Reset();									//ERROR,Reset LD3320
-			Driver_Delay_ms(50);	
-			continue;
-		}
+		// Driver_Delay_ms(100);
+		// if (LD_AsrAddFixed() == ERROR) {		//Add fixed to LD3320
+		// 	Serial.print("ERROR!!! LD_AsrAddFixed\r\n");
+		// 	LD_Reset();									//ERROR,Reset LD3320
+		// 	Driver_Delay_ms(50);	
+		// 	continue;
+		// }
 		Driver_Delay_ms(10);
 		if (LD_Run_ASR() == ERROR) {				//start ASR
 			Serial.print("ERROR!!! LD_AsrRun\r\n");
@@ -174,8 +197,8 @@ static UBYTE LD_AsrAddFixed(void)
   #define DATE_B 20 
 
   UBYTE  sRecog[DATE_A][DATE_B] = {   //add commond,use pinying
-        "liu shui deng",\
-        "an jian",\
+        "kai deng",\
+        "guan deng",\
         "shan shuo",\
         "bo fang",\
     
@@ -189,7 +212,7 @@ static UBYTE LD_AsrAddFixed(void)
                               };  
   flag = SUCCESS;
   for(k=0; k<DATE_A; k++) {           //write data to LD3320  
-    if(LD_Check_ASRBusyFlag() == ERROR) {
+    if(LD_Is_ASR_Busy() == ERROR) {
       flag = ERROR;
       break;
     }
@@ -242,7 +265,7 @@ static UBYTE LD_Run_ASR(void)
   LD_WriteReg(0x08, 0x00);
   Driver_Delay_ms(20);
 
-  if (LD_Check_ASRBusyFlag() == ERROR)
+  if (LD_Is_ASR_Busy() == ERROR)
     return ERROR;
 
   LD_WriteReg(0xB2, 0xff);
@@ -259,7 +282,7 @@ static UBYTE LD_Run_ASR(void)
   function:
         Check ASR state
 ********************************************************************************/
-static UBYTE LD_Check_ASRBusyFlag(void)
+UBYTE LD_Is_ASR_Busy(void)
 {
   UBYTE j;
   UBYTE flag = ERROR;
@@ -380,7 +403,7 @@ static void LD_Init_MP3()
   function:
         Write data to LD3320 reg
 ********************************************************************************/
-static void LD_WriteReg(UBYTE data1, UBYTE data2)
+void LD_WriteReg(UBYTE data1, UBYTE data2)
 {
   CS_0;
   WR_0;

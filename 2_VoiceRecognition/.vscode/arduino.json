@@ -1,4 +1,5 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "2_VoiceRecognition.ino"
+    "sketch": "2_VoiceRecognition.ino",
+    "port": "COM5"
 }

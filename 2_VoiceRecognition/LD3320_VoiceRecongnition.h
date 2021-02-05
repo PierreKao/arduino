@@ -16,8 +16,10 @@ public:
 	// void reset();
 	void init();
 	// unsigned char start();
-	void addCommand(char *pass, int num);
+	int addCommand(char *pass, int num);
 	int read();
+	void start();
+	
 private:
 };
 
